@@ -229,7 +229,7 @@ class TablaUbicacion extends StatelessWidget {
                     ),
                   ),
                 )
-                : const Center(child: Text('Este Codigo no cuenta con ubicación')), // no hay ubicaciones disponibles
+                : const Center(child: Text('')), // no hay ubicaciones disponibles
             
             SizedBox(height: 20),
             if (jsonData.isNotEmpty) ...[

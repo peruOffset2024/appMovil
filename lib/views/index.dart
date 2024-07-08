@@ -21,25 +21,113 @@ class _IndexPagState extends State<IndexPag> {
 
   @override
   Widget build(BuildContext context) {
-    final imagen =
-        'https://www.algevasa.com/wp-content/uploads/2018/11/funciones-operativas-del-almacen-logistico.jpg';
+  
 
     return Scaffold(
         drawer: Drawer(
-          child: Column(
-            children: [
-              Image.network(
-                imagen,
-                width: 350,
-              ),
-              ListTile(
-                  title: Text(
-                'Eddy Ricaro',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ))
-            ],
+  child: ListView(
+    padding: EdgeInsets.zero,
+    children: [
+      UserAccountsDrawerHeader(
+        accountName: Text("John Doe"),
+        accountEmail: Text("johndoe@example.com"),
+        currentAccountPicture: CircleAvatar(
+          backgroundImage: NetworkImage("https://example.com/profile_picture.jpg"),
+        ),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage("https://example.com/background_image.jpg"),
+            fit: BoxFit.fill,
           ),
         ),
+      ),
+      ListTile(
+        leading: Icon(Icons.home),
+        title: Text("Home"),
+        onTap: () {
+          // Update the state of the app
+          // Then close the drawer
+          Navigator.pop(context);
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.settings),
+        title: Text("Settings"),
+        onTap: () {
+          // Update the state of the app
+          // Then close the drawer
+          Navigator.pop(context);
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.help),
+        title: Text("Help"),
+        onTap: () {
+          // Update the state of the app
+          // Then close the drawer
+          Navigator.pop(context);
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.info),
+        title: Text("About"),
+        onTap: () {
+          // Show an about dialog
+          showAboutDialog(
+            context: context,
+            applicationName: "My App",
+            applicationVersion: "1.0.0",
+            applicationLegalese: "Copyright 2023 My Company",
+          );
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.logout),
+        title: Text("Log out"),
+        onTap: () {
+          // Log out the user
+          // Then close the drawer
+          Navigator.pop(context);
+        },
+      ),
+      Divider(),
+      ListTile(
+        leading: Icon(Icons.language),
+        title: Text("Language"),
+        trailing: DropdownButton(
+          value: "en",
+          onChanged: (value) {
+            // Update the language of the app
+          },
+          items: [
+            DropdownMenuItem(
+              child: Text("English"),
+              value: "en",
+            ),
+            DropdownMenuItem(
+              child: Text("Spanish"),
+              value: "es",
+            ),
+            DropdownMenuItem(
+              child: Text("French"),
+              value: "fr",
+            ),
+          ],
+        ),
+      ),
+      ListTile(
+        leading: Icon(Icons.add),
+        title: Text("Theme"),
+        trailing: Switch(
+          value: true,
+          onChanged: (value) {
+            // Update the theme of the app
+          },
+        ),
+      ),
+    ],
+  ),
+),
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Color.fromARGB(255, 231, 79, 112),
@@ -101,7 +189,7 @@ class _IndexPagState extends State<IndexPag> {
                           resultados: jsonData,
                           jsonDataUbi: jsonDataUbi,
                         ),
-                          Divider(),
+                       
                         TablaUbicacion(
                           jsonData: jsonData,
                           jsonDataUbi: jsonDataUbi,
@@ -110,7 +198,7 @@ class _IndexPagState extends State<IndexPag> {
                           onEliminarUbicacion: _eliminarUbicacion,
                           onActualizarUbicacion: _actualizarUbicacion,
                         ),
-                          Divider(),
+                       
                       ],
                     ),
                   ),

@@ -41,6 +41,40 @@ class TablaAlmacen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (jsonData.isNotEmpty) ...[
+            Container(
+              width: 700,
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'SBA: ${jsonData.first['ItemCode'] ?? 'N/A'}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    jsonData.first['itemdescripcion'] ??
+                        'Descripción no disponible',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+          ],
+          if (jsonData.isNotEmpty) ...[
               Container(
                 width: 600,
                 height: 60,
@@ -58,39 +92,6 @@ class TablaAlmacen extends StatelessWidget {
               ),
               SizedBox(height: 10,)
             ],
-          if (jsonData.isNotEmpty) ...[
-            Container(
-              width: 700,
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'SBA: ${jsonData.first['ItemCode'] ?? 'N/A'}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    jsonData.first['itemdescripcion'] ??
-                        'Descripción no disponible',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-          ],
           jsonData.isNotEmpty
               ? Container(
                   width: 700,
@@ -198,7 +199,7 @@ class TablaAlmacen extends StatelessWidget {
                     ),
                   ),
                 )
-              : const Center(child: Text('No existe el codigo SBA')), //texto Codigo SBA no existe
+              : const Center(child: Text('')), //texto Codigo SBA no existe
         ],
       ),
     );

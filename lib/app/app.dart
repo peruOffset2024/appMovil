@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-
-
 import 'package:sistema_almacenes/views/pantalla_principal/pantalla_inicio.dart';
+
+
+
 
 
 
@@ -11,7 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: PantallaInicioAmp(),
+      theme: ThemeData(primarySwatch: Colors.brown),
+      home: Scaffold(
+      
+        body: PantallaInicioAmp(),
+      ),
     );
   }
 }
