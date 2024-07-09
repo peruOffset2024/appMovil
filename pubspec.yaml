@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter_barcode_scanner: ^2.0.0
   http: ^1.2.1
+  flutter_login: ^5.0.0
+  sql_conn: ^0.0.3
   
 
 dev_dependencies:

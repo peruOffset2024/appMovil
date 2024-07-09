@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sistema_almacenes/views/pantalla_principal/pantalla_inicio.dart';
+import 'package:sistema_almacenes/views/login/login.dart';
+
 
 
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.brown),
       home: Scaffold(
       
-        body: PantallaInicioAmp(),
+        body: LoginScreen(),
       ),
     );
   }

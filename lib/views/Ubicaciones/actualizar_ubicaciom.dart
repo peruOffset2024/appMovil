@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:sistema_almacenes/views/Ubicaciones/actualizar_vista.dart';
 
 class InsertarUbicacion extends StatefulWidget {
   const InsertarUbicacion({super.key});
@@ -76,6 +75,7 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
         };
         setState(() {
           jsonUbic.add(newData);
+          _clearTextControllers();
         });
       } else {
         print('Error al enviar datos a la API');
@@ -88,7 +88,7 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
   Future<void> eliminarData(String id) async {
     try {
       final url = 'http://190.107.181.163:81/amq/flutter_ajax_delete.php?id=$id';
-      final response = await http.get(Uri.parse(url));
+      final response = await http.delete(Uri.parse(url));
 
       if (response.statusCode == 200) {
         setState(() {
@@ -105,13 +105,14 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
   Future<void> actualizarData(Map<String, dynamic> ubicacion) async {
     try {
       final url = 'http://190.107.181.163:81/amq/flutter_ajax_update.php';
-      final response = await http.post(Uri.parse(url), body: ubicacion);
+      final response = await http.put(Uri.parse(url), body: ubicacion);
 
       if (response.statusCode == 200) {
         setState(() {
           final index = jsonUbic.indexWhere((element) => element['id'] == ubicacion['id']);
           if (index != -1) {
             jsonUbic[index] = ubicacion;
+            _clearTextControllers();
           }
         });
       } else {
@@ -122,71 +123,30 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
     }
   }
 
-  void mostrarFormularioUbicacion() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Agregar Ubicación'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: _zonaController,
-                  decoration: InputDecoration(labelText: 'Zona'),
-                ),
-                TextField(
-                  controller: _standController,
-                  decoration: InputDecoration(labelText: 'Stand'),
-                ),
-                TextField(
-                  controller: _colController,
-                  decoration: InputDecoration(labelText: 'Col'),
-                ),
-                TextField(
-                  controller: _filController,
-                  decoration: InputDecoration(labelText: 'Fila'),
-                ),
-                TextField(
-                  controller: _cantidadController,
-                  decoration: InputDecoration(labelText: 'Cantidad'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                enviarData();
-                Navigator.of(context).pop();
-              },
-              child: Text('Crear'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancelar'),
-            ),
-          ],
-        );
-      },
-    );
+  void _clearTextControllers() {
+    _zonaController.clear();
+    _standController.clear();
+    _colController.clear();
+    _filController.clear();
+    _cantidadController.clear();
   }
 
-  void mostrarActualizarFormulario(Map<String, dynamic> ubicacion) {
-    _zonaController.text = ubicacion['Zona'];
-    _standController.text = ubicacion['Stand'];
-    _colController.text = ubicacion['col'];
-    _filController.text = ubicacion['fil'];
-    _cantidadController.text = ubicacion['Cantidad'];
+  void mostrarFormularioUbicacion({Map<String, dynamic>? ubicacion}) {
+    if (ubicacion != null) {
+      _zonaController.text = ubicacion['Zona'];
+      _standController.text = ubicacion['Stand'];
+      _colController.text = ubicacion['col'];
+      _filController.text = ubicacion['fil'];
+      _cantidadController.text = ubicacion['Cantidad'];
+    } else {
+      _clearTextControllers();
+    }
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Actualizar Ubicación'),
+          title: Text(ubicacion == null ? 'Agregar Ubicación' : 'Actualizar Ubicación'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -217,19 +177,23 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
           actions: [
             ElevatedButton(
               onPressed: () {
-                final updatedUbicacion = {
-                  'id': ubicacion['id'],
-                  'Ubicacion': _insetarUbiController.text,
-                  'Zona': _zonaController.text,
-                  'Stand': _standController.text,
-                  'col': _colController.text,
-                  'fil': _filController.text,
-                  'Cantidad': _cantidadController.text,
-                };
-                actualizarData(updatedUbicacion);
+                if (ubicacion == null) {
+                  enviarData();
+                } else {
+                  final updatedUbicacion = {
+                    'id': ubicacion['id'],
+                    'Ubicacion': _insetarUbiController.text,
+                    'Zona': _zonaController.text,
+                    'Stand': _standController.text,
+                    'col': _colController.text,
+                    'fil': _filController.text,
+                    'Cantidad': _cantidadController.text,
+                  };
+                  actualizarData(updatedUbicacion);
+                }
                 Navigator.of(context).pop();
               },
-              child: Text('Actualizar'),
+              child: Text(ubicacion == null ? 'Crear' : 'Actualizar'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -247,8 +211,9 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Gestión de Ubicaciones'),
-        backgroundColor: Color.fromARGB(255, 231, 79, 112),
+        backgroundColor: Color(0xFF6CA8F1),
       ),
       body: Column(
         children: [
@@ -277,10 +242,9 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
                     child: Text('Buscar')),
                 SizedBox(width: 290),
                 ElevatedButton(
-                  onPressed: mostrarFormularioUbicacion,
-                  child: Text('Agregar Ubicación', style: TextStyle(color: Colors.black ,fontSize: 15, fontWeight: FontWeight.bold),),
+                  onPressed: () => mostrarFormularioUbicacion(),
+                  child: Text('Agregar Ubicación', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
                 ),
-                
               ],
             ),
           ),
@@ -307,7 +271,7 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
                       IconButton(
                         icon: Icon(Icons.edit),
                         onPressed: () {
-                          mostrarActualizarFormulario(ubicacion);
+                          mostrarFormularioUbicacion(ubicacion: ubicacion);
                         },
                       ),
                       IconButton(
@@ -316,7 +280,6 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
                           eliminarData(ubicacion['id'].toString());
                         },
                       ),
-
                     ],
                   ),
                 );
@@ -327,8 +290,4 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
       ),
     );
   }
-
-
 }
-
-

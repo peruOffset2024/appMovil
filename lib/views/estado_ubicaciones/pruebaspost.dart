@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                       final jsonData = jsonEncode(ubicacion.toJson());
 
-                      final url = 'http://190.107.181.163:81/amq/flutter_ajax_ubi.php?search=757';
+                      final url = 'http://190.107.181.163:81/amq/flutter_ajax_add.php?search=757';
                       final response = await http.post(
                         Uri.parse(url),
                         headers: {

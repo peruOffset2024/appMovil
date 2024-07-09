@@ -17,7 +17,7 @@ class InsertarUbicacion2 extends StatelessWidget {
                 ? SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
-                      headingRowColor: MaterialStateColor.resolveWith(
+                      headingRowColor: WidgetStateColor.resolveWith(
                         (states) => Colors.grey[300]!,
                       ),
                       columns: const [

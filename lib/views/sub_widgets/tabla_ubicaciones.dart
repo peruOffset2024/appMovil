@@ -248,7 +248,7 @@ class TablaUbicacion extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: DataTable(
-                      headingRowColor: MaterialStateColor.resolveWith(
+                      headingRowColor: WidgetStateColor.resolveWith(
                         (states) => Colors.grey[300]!,
                       ),
                       columns: const [

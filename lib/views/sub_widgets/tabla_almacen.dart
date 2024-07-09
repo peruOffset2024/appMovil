@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class TablaAlmacen extends StatelessWidget {
   final List<dynamic> jsonData;
+  // ignore: use_key_in_widget_constructors
   const TablaAlmacen(
       {Key? key,
       required this.jsonData,
@@ -43,7 +44,7 @@ class TablaAlmacen extends StatelessWidget {
           if (jsonData.isNotEmpty) ...[
             Container(
               width: 700,
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
@@ -53,17 +54,17 @@ class TablaAlmacen extends StatelessWidget {
                 children: [
                   Text(
                     'SBA: ${jsonData.first['ItemCode'] ?? 'N/A'}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
                     jsonData.first['itemdescripcion'] ??
                         'Descripción no disponible',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                       color: Colors.black87,
                       fontWeight: FontWeight.bold
@@ -72,13 +73,14 @@ class TablaAlmacen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
           if (jsonData.isNotEmpty) ...[
+              // ignore: sized_box_for_whitespace
               Container(
                 width: 600,
                 height: 60,
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
@@ -90,9 +92,10 @@ class TablaAlmacen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 10,)
+              const SizedBox(height: 10,)
             ],
           jsonData.isNotEmpty
+              // ignore: sized_box_for_whitespace
               ? Container(
                   width: 700,
                   child: Card(
@@ -103,7 +106,7 @@ class TablaAlmacen extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: DataTable(
-                        headingRowColor: MaterialStateColor.resolveWith(
+                        headingRowColor: WidgetStateColor.resolveWith(
                           (states) => Colors.grey[300]!,
                         ),
                         columns: const [
@@ -135,29 +138,30 @@ class TablaAlmacen extends StatelessWidget {
                             return DataRow(
                               cells: [
                                 DataCell(Container(
-                                  padding: EdgeInsets.all(8),
+                                  padding: const EdgeInsets.all(8),
                                   child: Text(
                                     data['Name'] ?? 'Sin almacén',
-                                    style: TextStyle(fontSize: 14),
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                 )),
                                 DataCell(Container(
-                                  padding: EdgeInsets.all(8),
+                                  padding: const EdgeInsets.all(8),
                                   child: Text(
                                     data['Stock']?.toString() ?? 'Sin stock',
-                                    style: TextStyle(fontSize: 14),
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                 )),
                               ],
                             );
+                          // ignore: unnecessary_to_list_in_spreads
                           }).toList(),
                           if (jsonData.any((data) =>
                               almacenesConsiderados.contains(data['Name'])))
                             DataRow(
                               cells: [
                                 DataCell(Container(
-                                  padding: EdgeInsets.all(8),
-                                  child: Text(
+                                  padding: const EdgeInsets.all(8),
+                                  child: const Text(
                                     'TOTAL',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -167,10 +171,10 @@ class TablaAlmacen extends StatelessWidget {
                                   ),
                                 )),
                                 DataCell(Container(
-                                  padding: EdgeInsets.all(8),
+                                  padding: const EdgeInsets.all(8),
                                   child: Text(
                                     totalCantidad.toString(),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
                                       color: Colors.blue,
@@ -182,11 +186,11 @@ class TablaAlmacen extends StatelessWidget {
                         ],
                         columnSpacing: 20.0,
                         horizontalMargin: 10.0,
-                        headingTextStyle: TextStyle(
+                        headingTextStyle: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,
                         ),
-                        dataTextStyle: TextStyle(
+                        dataTextStyle: const TextStyle(
                           color: Colors.black,
                           fontSize: 14,
                         ),
