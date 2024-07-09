@@ -1,92 +1,334 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:sistema_almacenes/views/Ubicaciones/actualizar_vista.dart';
 
-class ActualizarUbicacion extends StatefulWidget {
-   ActualizarUbicacion({super.key});
+class InsertarUbicacion extends StatefulWidget {
+  const InsertarUbicacion({super.key});
 
   @override
-  State<ActualizarUbicacion> createState() => _ActualizarUbicacionState();
+  State<InsertarUbicacion> createState() => _InsertarUbicacionState();
 }
 
-class _ActualizarUbicacionState extends State<ActualizarUbicacion> {
-  final TextEditingController _ubicar= TextEditingController();
-  List<dynamic> jsonUbi = [];
+class _InsertarUbicacionState extends State<InsertarUbicacion> {
+  final TextEditingController _insetarUbiController = TextEditingController();
+  final TextEditingController _zonaController = TextEditingController();
+  final TextEditingController _standController = TextEditingController();
+  final TextEditingController _colController = TextEditingController();
+  final TextEditingController _filController = TextEditingController();
+  final TextEditingController _cantidadController = TextEditingController();
+  List<dynamic> jsonUbic = [];
+
+  Future<void> insertarData() async {
+    try {
+      final codigosba = _insetarUbiController.text;
+      if (codigosba.isNotEmpty) {
+        final urlUbi =
+            'http://190.107.181.163:81/amq/flutter_ajax_ubi.php?search=$codigosba';
+        final response = await http.get(Uri.parse(urlUbi));
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          setState(() {
+            jsonUbic = data is List<dynamic> ? data : [];
+          });
+        } else {
+          setState(() {
+            jsonUbic = [];
+          });
+          print('Error al consumir el API');
+        }
+      } else {
+        setState(() {
+          jsonUbic = [];
+        });
+        print('Código SBA vacío');
+      }
+    } catch (e) {
+      setState(() {
+        jsonUbic = [];
+      });
+      print('Error: $e');
+    }
+  }
+
+  Future<void> enviarData() async {
+    try {
+      final sbaCodigo = _insetarUbiController.text;
+      final url = 'http://190.107.181.163:81/amq/flutter_ajax_add.php?search=$sbaCodigo';
+      final response = await http.post(Uri.parse(url), body: {
+        'Ubicacion': _insetarUbiController.text,
+        'Zona': _zonaController.text,
+        'Stand': _standController.text,
+        'col': _colController.text,
+        'fil': _filController.text,
+        'Cantidad': _cantidadController.text,
+      });
+
+      if (response.statusCode == 200) {
+        final newData = {
+          'Ubicacion': _insetarUbiController.text,
+          'Zona': _zonaController.text,
+          'Stand': _standController.text,
+          'col': _colController.text,
+          'fil': _filController.text,
+          'Cantidad': _cantidadController.text,
+          'Img': '',
+        };
+        setState(() {
+          jsonUbic.add(newData);
+        });
+      } else {
+        print('Error al enviar datos a la API');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> eliminarData(String id) async {
+    try {
+      final url = 'http://190.107.181.163:81/amq/flutter_ajax_delete.php?id=$id';
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        setState(() {
+          jsonUbic.removeWhere((element) => element['id'] == id);
+        });
+      } else {
+        print('Error al eliminar la ubicación');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> actualizarData(Map<String, dynamic> ubicacion) async {
+    try {
+      final url = 'http://190.107.181.163:81/amq/flutter_ajax_update.php';
+      final response = await http.post(Uri.parse(url), body: ubicacion);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          final index = jsonUbic.indexWhere((element) => element['id'] == ubicacion['id']);
+          if (index != -1) {
+            jsonUbic[index] = ubicacion;
+          }
+        });
+      } else {
+        print('Error al actualizar la ubicación');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void mostrarFormularioUbicacion() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Agregar Ubicación'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _zonaController,
+                  decoration: InputDecoration(labelText: 'Zona'),
+                ),
+                TextField(
+                  controller: _standController,
+                  decoration: InputDecoration(labelText: 'Stand'),
+                ),
+                TextField(
+                  controller: _colController,
+                  decoration: InputDecoration(labelText: 'Col'),
+                ),
+                TextField(
+                  controller: _filController,
+                  decoration: InputDecoration(labelText: 'Fila'),
+                ),
+                TextField(
+                  controller: _cantidadController,
+                  decoration: InputDecoration(labelText: 'Cantidad'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                enviarData();
+                Navigator.of(context).pop();
+              },
+              child: Text('Crear'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void mostrarActualizarFormulario(Map<String, dynamic> ubicacion) {
+    _zonaController.text = ubicacion['Zona'];
+    _standController.text = ubicacion['Stand'];
+    _colController.text = ubicacion['col'];
+    _filController.text = ubicacion['fil'];
+    _cantidadController.text = ubicacion['Cantidad'];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Actualizar Ubicación'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _zonaController,
+                  decoration: InputDecoration(labelText: 'Zona'),
+                ),
+                TextField(
+                  controller: _standController,
+                  decoration: InputDecoration(labelText: 'Stand'),
+                ),
+                TextField(
+                  controller: _colController,
+                  decoration: InputDecoration(labelText: 'Col'),
+                ),
+                TextField(
+                  controller: _filController,
+                  decoration: InputDecoration(labelText: 'Fila'),
+                ),
+                TextField(
+                  controller: _cantidadController,
+                  decoration: InputDecoration(labelText: 'Cantidad'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                final updatedUbicacion = {
+                  'id': ubicacion['id'],
+                  'Ubicacion': _insetarUbiController.text,
+                  'Zona': _zonaController.text,
+                  'Stand': _standController.text,
+                  'col': _colController.text,
+                  'fil': _filController.text,
+                  'Cantidad': _cantidadController.text,
+                };
+                actualizarData(updatedUbicacion);
+                Navigator.of(context).pop();
+              },
+              child: Text('Actualizar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Cambiar Ubicacion'),
-      centerTitle: true,
-      backgroundColor: const Color.fromARGB(255, 182, 57, 48),),
-     
+      appBar: AppBar(
+        title: Text('Gestión de Ubicaciones'),
+        backgroundColor: Color.fromARGB(255, 231, 79, 112),
+      ),
       body: Column(
-        
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Row(children: [
-            SizedBox(height: 100,),
-            Container(
-              width: 240,
-              height: 80,
-              child: TextField(
-                controller: _ubicar,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                hintText: 'Ingrese codigo SBA',
-                prefixIcon: Icon(Icons.search)
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: 200,
+                  child: TextField(
+                    controller: _insetarUbiController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        hintText: 'Ingresa código SBA',
+                        prefixIcon: Icon(Icons.search)),
+                  ),
                 ),
-              ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: () {
+                      insertarData();
+                    },
+                    child: Text('Buscar')),
+                SizedBox(width: 290),
+                ElevatedButton(
+                  onPressed: mostrarFormularioUbicacion,
+                  child: Text('Agregar Ubicación', style: TextStyle(color: Colors.black ,fontSize: 15, fontWeight: FontWeight.bold),),
+                ),
+                
+              ],
             ),
-            ElevatedButton(onPressed: _actualizarUbi, child: Text('Buscar'))
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: jsonUbic.length,
+              itemBuilder: (context, index) {
+                final ubicacion = jsonUbic[index];
+                return ListTile(
+                  title: Text('Ubicación: ${ubicacion['Ubicacion']}'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Zona: ${ubicacion['Zona']}'),
+                      Text('Stand: ${ubicacion['Stand']}'),
+                      Text('Columna: ${ubicacion['col']}'),
+                      Text('Fila: ${ubicacion['fil']}'),
+                      Text('Cantidad: ${ubicacion['Cantidad']}'),
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          mostrarActualizarFormulario(ubicacion);
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          eliminarData(ubicacion['id'].toString());
+                        },
+                      ),
 
-          ],),
-          Expanded(child: SingleChildScrollView(child: Column(
-            children: [
-              VistaActualizarUbicacion(jsonDataUbi: jsonUbi, resultados: [],),
-            ],
-          )))
-        ]
-
-        
-
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Future<void> _actualizarUbi()async{
-    try{
-      final datosUbi = _ubicar.text;
-      if(datosUbi.isNotEmpty){
-        final urlUbi = 'http://190.107.181.163:81/amq/flutter_ajax_ubi.php?search=$datosUbi';
-        final responseUbicac = await http.get(Uri.parse(urlUbi));
-        if(responseUbicac.statusCode == 200){
-          final ubiData = jsonDecode(responseUbicac.body);
-          setState(() {
-            jsonUbi = ubiData is List<dynamic> ? ubiData : [];
 
-          });
-        } else{
-          setState(() {
-            jsonUbi = [];
-          });
-          print('Error al obtener la ubicacion');
-        }
-      } else{
-        setState(() {
-          jsonUbi = [];
-        });
-        print('Ingrese un codigo valido');
-      }
-
-    } catch(e){
-      setState(() {
-        jsonUbi = [];
-      });
-      print('Error: $e');
-    }
-
-  }
 }
+
+

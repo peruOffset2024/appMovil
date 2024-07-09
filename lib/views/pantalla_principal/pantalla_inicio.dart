@@ -154,7 +154,7 @@ class _PantallaInicioAmpState extends State<PantallaInicioAmp> {
         // Navegar a la nueva vista aquí
        Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) =>  ActualizarUbicacion()),
+          MaterialPageRoute(builder: (context) =>  InsertarUbicacion()),
         );
       },
       child: Padding(
