@@ -10,118 +10,16 @@ class InsertarUbicacion extends StatefulWidget {
 }
 
 class _InsertarUbicacionState extends State<InsertarUbicacion> {
-  final TextEditingController _insetarUbiController = TextEditingController();
+  final TextEditingController _ubicacionController = TextEditingController();
+  final TextEditingController _insetarUbiController = TextEditingController(); // Sba de busqueda
   final TextEditingController _zonaController = TextEditingController();
   final TextEditingController _standController = TextEditingController();
   final TextEditingController _colController = TextEditingController();
   final TextEditingController _filController = TextEditingController();
+  final TextEditingController _usuarioController = TextEditingController();
   final TextEditingController _cantidadController = TextEditingController();
+  final TextEditingController _imgController = TextEditingController();
   List<dynamic> jsonUbic = [];
-
-  Future<void> insertarData() async {
-    try {
-      final codigosba = _insetarUbiController.text;
-      if (codigosba.isNotEmpty) {
-        final urlUbi =
-            'http://190.107.181.163:81/amq/flutter_ajax_ubi.php?search=$codigosba';
-        final response = await http.get(Uri.parse(urlUbi));
-        if (response.statusCode == 200) {
-          final data = jsonDecode(response.body);
-          setState(() {
-            jsonUbic = data is List<dynamic> ? data : [];
-          });
-        } else {
-          setState(() {
-            jsonUbic = [];
-          });
-          print('Error al consumir el API');
-        }
-      } else {
-        setState(() {
-          jsonUbic = [];
-        });
-        print('Código SBA vacío');
-      }
-    } catch (e) {
-      setState(() {
-        jsonUbic = [];
-      });
-      print('Error: $e');
-    }
-  }
-
-  Future<void> enviarData() async {
-    try {
-      final sbaCodigo = _insetarUbiController.text;
-      final url = 'http://190.107.181.163:81/amq/flutter_ajax_add.php?search=$sbaCodigo';
-      final response = await http.post(Uri.parse(url), body: {
-        'Ubicacion': _insetarUbiController.text,
-        'Zona': _zonaController.text,
-        'Stand': _standController.text,
-        'col': _colController.text,
-        'fil': _filController.text,
-        'Cantidad': _cantidadController.text,
-      });
-
-      if (response.statusCode == 200) {
-        final newData = {
-          'Ubicacion': _insetarUbiController.text,
-          'Zona': _zonaController.text,
-          'Stand': _standController.text,
-          'col': _colController.text,
-          'fil': _filController.text,
-          'Cantidad': _cantidadController.text,
-          'Img': '',
-        };
-        setState(() {
-          jsonUbic.add(newData);
-          _clearTextControllers();
-        });
-      } else {
-        print('Error al enviar datos a la API');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  Future<void> eliminarData(String id) async {
-    try {
-      final url = 'http://190.107.181.163:81/amq/flutter_ajax_delete.php?id=$id';
-      final response = await http.delete(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        setState(() {
-          jsonUbic.removeWhere((element) => element['id'] == id);
-        });
-      } else {
-        print('Error al eliminar la ubicación');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  Future<void> actualizarData(Map<String, dynamic> ubicacion) async {
-    try {
-      final url = 'http://190.107.181.163:81/amq/flutter_ajax_update.php';
-      final response = await http.put(Uri.parse(url), body: ubicacion);
-
-      if (response.statusCode == 200) {
-        setState(() {
-          final index = jsonUbic.indexWhere((element) => element['id'] == ubicacion['id']);
-          if (index != -1) {
-            jsonUbic[index] = ubicacion;
-            _clearTextControllers();
-          }
-        });
-      } else {
-        print('Error al actualizar la ubicación');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
 
   void _clearTextControllers() {
     _zonaController.clear();
@@ -133,11 +31,14 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
 
   void mostrarFormularioUbicacion({Map<String, dynamic>? ubicacion}) {
     if (ubicacion != null) {
-      _zonaController.text = ubicacion['Zona'];
-      _standController.text = ubicacion['Stand'];
-      _colController.text = ubicacion['col'];
-      _filController.text = ubicacion['fil'];
-      _cantidadController.text = ubicacion['Cantidad'];
+      _ubicacionController.text = ubicacion['ubicacion'] ?? '';
+      _zonaController.text = ubicacion['zona'] ?? '';
+      _standController.text = ubicacion['stand'] ?? '';
+      _colController.text = ubicacion['col'] ?? '';
+      _filController.text = ubicacion['fil'] ?? '';
+      _cantidadController.text = ubicacion['cantidad'] ?? '';
+      _usuarioController.text = ubicacion['usuario'] ?? '';
+      _imgController.text = ubicacion['img'] ?? '';
     } else {
       _clearTextControllers();
     }
@@ -151,6 +52,15 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                TextField(
+                  controller: _insetarUbiController,
+                  decoration: InputDecoration(labelText: 'Código SBA'),
+                  enabled: false,
+                ),
+                TextField(
+                  controller: _ubicacionController,
+                  decoration: InputDecoration(labelText: 'Ubicacion'),
+                ),
                 TextField(
                   controller: _zonaController,
                   decoration: InputDecoration(labelText: 'Zona'),
@@ -168,8 +78,16 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
                   decoration: InputDecoration(labelText: 'Fila'),
                 ),
                 TextField(
+                  controller: _usuarioController,
+                  decoration: InputDecoration(labelText: 'Usuario'),
+                ),
+                TextField(
                   controller: _cantidadController,
                   decoration: InputDecoration(labelText: 'Cantidad'),
+                ),
+                TextField(
+                  controller: _imgController,
+                  decoration: InputDecoration(labelText: 'Img'),
                 ),
               ],
             ),
@@ -182,12 +100,14 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
                 } else {
                   final updatedUbicacion = {
                     'id': ubicacion['id'],
-                    'Ubicacion': _insetarUbiController.text,
-                    'Zona': _zonaController.text,
-                    'Stand': _standController.text,
+                    'ubicacion': _ubicacionController.text,
+                    'zona': _zonaController.text,
+                    'stand': _standController.text,
                     'col': _colController.text,
                     'fil': _filController.text,
-                    'Cantidad': _cantidadController.text,
+                    'cantidad': _cantidadController.text,
+                    'usuario': _usuarioController.text,
+                    'img': _imgController.text
                   };
                   actualizarData(updatedUbicacion);
                 }
@@ -237,7 +157,7 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
                 SizedBox(width: 10),
                 ElevatedButton(
                     onPressed: () {
-                      insertarData();
+                      obtenerDatosUbicacion();
                     },
                     child: Text('Buscar')),
                 SizedBox(width: 290),
@@ -258,6 +178,7 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text('ID: ${ubicacion['id']}'),
                       Text('Zona: ${ubicacion['Zona']}'),
                       Text('Stand: ${ubicacion['Stand']}'),
                       Text('Columna: ${ubicacion['col']}'),
@@ -290,4 +211,164 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
       ),
     );
   }
+
+  Future<void> enviarData() async {
+    try {
+      final sbaCodigoUbi = _insetarUbiController.text;
+      final url = 'http://190.107.181.163:81/amq/flutter_ajax_add.php';
+      
+      // Imprimir los valores antes de enviar
+      print('Enviando datos:');
+      print('ubicacion: ${_ubicacionController.text}');
+      print('zona: ${_zonaController.text}');
+      print('stand: ${_standController.text}');
+      print('col: ${_colController.text}');
+      print('fil: ${_filController.text}');
+      print('cantidad: ${_cantidadController.text}');
+      print('usuario: ${_usuarioController.text}');
+      print('img: ${_imgController.text}');
+      
+      final response = await http.post(Uri.parse(url), body: {
+        'search': sbaCodigoUbi,
+        'ubicacion': _ubicacionController.text,
+        'zona': _zonaController.text,
+        'stand': _standController.text,
+        'col': _colController.text,
+        'fil': _filController.text,
+        'cantidad': _cantidadController.text,
+        'usuario': _usuarioController.text,
+        'img': _imgController.text
+      });
+
+      if (response.statusCode == 200) {
+        final newData = {
+          'Ubicacion': _ubicacionController.text,
+          'zona': _zonaController.text,
+          'stand': _standController.text,
+          'col': _colController.text,
+          'fil': _filController.text,
+          'cantidad': _cantidadController.text,
+          'usuario': _usuarioController.text,
+          'img': _imgController.text
+        };
+        setState(() {
+          jsonUbic.add(newData);
+          
+          _clearTextControllers();
+          obtenerDatosUbicacion(); 
+        });
+        print(jsonUbic);
+        print(newData);
+      } else {
+        print('Error al enviar datos a la API. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  bool validateData(Map<String, dynamic> data) {
+  // Validar que todos los campos necesarios no estén vacíos
+  if (data['ubicacion'].isEmpty ||
+      data['zona'].isEmpty ||
+      data['stand'].isEmpty ||
+      data['col'].isEmpty ||
+      data['fil'].isEmpty ||
+      data['cantidad'].isEmpty) {
+    return false;
+  }
+  return true;
+}
+
+Future<void> actualizarData(Map<String, dynamic> ubicacion) async {
+  try {
+    final url = 'http://190.107.181.163:81/amq/flutter_ajax_update.php';
+
+    final Map<String, dynamic> body = {
+      'id': ubicacion['id'],
+      'ubicacion': _ubicacionController.text,
+      'zona': _zonaController.text,
+      'stand': _standController.text,
+      'col': _colController.text,
+      'fil': _filController.text,
+      'cantidad': _cantidadController.text,
+      'usuario': _usuarioController.text,
+      'Img': _imgController.text,
+    };
+
+    if (!validateData(body)) {
+      print('Error: Datos inválidos');
+      return;
+    }
+
+    print('Actualizando datos con el body: $body');
+
+    final response = await http.put(Uri.parse(url), body: jsonEncode(body), headers: {
+      'Content-Type': 'application/json',
+    });
+
+    print('Respuesta del servidor: ${response.body}');
+
+    if (response.statusCode == 200) {
+      obtenerDatosUbicacion(); // Refrescar después de actualizar datos
+    } else {
+      print('Error al actualizar la ubicación. Status code: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+
+
+
+  Future<void> eliminarData(String id) async {
+    try {
+      final url = 'http://190.107.181.163:81/amq/flutter_ajax_delete.php?id=$id';
+      final response = await http.delete(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        setState(() {
+          jsonUbic.removeWhere((element) => element['id'] == id);
+        });
+        obtenerDatosUbicacion();
+      } else {
+        print('Error al eliminar la ubicación. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> obtenerDatosUbicacion() async {
+  try {
+    final codigosba = _insetarUbiController.text;
+    if (codigosba.isNotEmpty) {
+      final urlUbi = 'http://190.107.181.163:81/amq/flutter_ajax_ubi.php?search=$codigosba';
+      final response = await http.get(Uri.parse(urlUbi));
+      if (response.statusCode == 200) {
+        print('Response body: ${response.body}');
+        final data = jsonDecode(response.body);
+        setState(() {
+          jsonUbic = data is List<dynamic> ? data : [];
+        });
+      } else {
+        setState(() {
+          jsonUbic = [];
+        });
+        print('Error al consumir el API. Status code: ${response.statusCode}');
+      }
+    } else {
+      setState(() {
+        jsonUbic = [];
+      });
+      print('Código SBA vacío');
+    }
+  } catch (e) {
+    setState(() {
+      jsonUbic = [];
+    });
+    print('Error: $e');
+  }
+}
+
 }

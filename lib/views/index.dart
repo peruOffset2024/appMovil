@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter/services.dart';
+import 'package:sistema_almacenes/views/Ubicaciones/actualizar_ubicaciom.dart';
 
 import 'package:sistema_almacenes/views/sub_widgets/tabla_ubicaciones.dart';
 import 'package:sistema_almacenes/views/sub_widgets/tabla_almacen.dart';
@@ -106,7 +107,11 @@ class _IndexPagState extends State<IndexPag> {
               ],
             ),
           ],
-        ));
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=> InsertarUbicacion())) ),
+        );
   }
 
   Future<void> _obtenerDatos() async {
