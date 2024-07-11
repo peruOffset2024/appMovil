@@ -1,0 +1,1 @@
+const url = 'http://190.107.181.163:81/amq/flutter_ajax_token.php';

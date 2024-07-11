@@ -11,7 +11,7 @@ class InsertarUbicacion extends StatefulWidget {
 
 class _InsertarUbicacionState extends State<InsertarUbicacion> {
   final TextEditingController _ubicacionController = TextEditingController();
-  final TextEditingController _insetarUbiController = TextEditingController(); // Sba de busqueda
+  final TextEditingController _insetarUbiController = TextEditingController(); // SBA de búsqueda
   final TextEditingController _zonaController = TextEditingController();
   final TextEditingController _standController = TextEditingController();
   final TextEditingController _colController = TextEditingController();
@@ -29,16 +29,16 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
     _cantidadController.clear();
   }
 
-  void mostrarFormularioUbicacion({Map<String, dynamic>? ubicacion}) {
-    if (ubicacion != null) {
-      _ubicacionController.text = ubicacion['ubicacion'] ?? '';
-      _zonaController.text = ubicacion['zona'] ?? '';
-      _standController.text = ubicacion['stand'] ?? '';
-      _colController.text = ubicacion['col'] ?? '';
-      _filController.text = ubicacion['fil'] ?? '';
-      _cantidadController.text = ubicacion['cantidad'] ?? '';
-      _usuarioController.text = ubicacion['usuario'] ?? '';
-      _imgController.text = ubicacion['img'] ?? '';
+  void mostrarFormularioUbicacion({Map<String, dynamic>? mapUbicacion}) {
+    if (mapUbicacion != null) {
+      _ubicacionController.text = mapUbicacion['Ubicacion'] ?? '';
+      _zonaController.text = mapUbicacion['Zona'] ?? '';
+      _standController.text = mapUbicacion['Stand'] ?? '';
+      _colController.text = mapUbicacion['col'] ?? '';
+      _filController.text = mapUbicacion['fil'] ?? '';
+      _cantidadController.text = mapUbicacion['Cantidad'] ?? '';
+      _usuarioController.text = mapUbicacion['usuario'] ?? '';
+      _imgController.text = mapUbicacion['Img'] ?? '';
     } else {
       _clearTextControllers();
     }
@@ -47,11 +47,12 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(ubicacion == null ? 'Agregar Ubicación' : 'Actualizar Ubicación'),
+          title: Text(mapUbicacion == null ? 'Agregar Ubicación' : 'Actualizar Ubicación'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                
                 TextField(
                   controller: _insetarUbiController,
                   decoration: InputDecoration(labelText: 'Código SBA'),
@@ -95,29 +96,30 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
           actions: [
             ElevatedButton(
               onPressed: () {
-                if (ubicacion == null) {
+                
+                if (mapUbicacion == null) {
                   enviarData();
                 } else {
                   final updatedUbicacion = {
-                    'id': ubicacion['id'],
-                    'ubicacion': _ubicacionController.text,
-                    'zona': _zonaController.text,
-                    'stand': _standController.text,
+                    'id': mapUbicacion['id'],
+                    'usuario': _usuarioController.text,
+                    'Ubicacion': _ubicacionController.text,
+                    'Zona': _zonaController.text,
+                    'Stand': _standController.text,
                     'col': _colController.text,
                     'fil': _filController.text,
-                    'cantidad': _cantidadController.text,
-                    'usuario': _usuarioController.text,
-                    'img': _imgController.text
+                    'Cantidad': _cantidadController.text,
+                    'Img': _imgController.text
                   };
-                  actualizarData(updatedUbicacion);
+                  _actualizarData(updatedUbicacion);
                 }
                 Navigator.of(context).pop();
               },
-              child: Text(ubicacion == null ? 'Crear' : 'Actualizar'),
+              child: Text(mapUbicacion == null ? 'Crear' : 'Actualizar'),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                
               },
               child: Text('Cancelar'),
             ),
@@ -136,14 +138,70 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
         backgroundColor: Color(0xFF6CA8F1),
       ),
       body: Column(
+    
         children: [
-          Padding(
-            padding: EdgeInsets.all(10),
+
+          Expanded(
+            child: ListView.builder(
+              itemCount: jsonUbic.length,
+              itemBuilder: (context, index) {
+                final ubicacion = jsonUbic[index]; // ubicacion de 
+                return ListTile(
+                  title: Text('Ubicación: ${ubicacion['Ubicacion']}'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Divider(),
+                      Text('ID: ${ubicacion['id']}'),
+                      Text('Zona: ${ubicacion['Zona']}'),
+                      Text('Stand: ${ubicacion['Stand']}'),
+                      Text('Columna: ${ubicacion['col']}'),
+                      Text('Fila: ${ubicacion['fil']}'),
+                      Text('Cantidad: ${ubicacion['Cantidad']}'),
+                      Text('Usuario: ${ubicacion['usuario']}'),
+                      Text('${jsonUbic[index]}'),
+                      Divider()
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image(image: AssetImage('assets/ggg.gif')),
+
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          mostrarFormularioUbicacion(mapUbicacion: ubicacion);
+                        },
+                      ),
+                     
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          Divider(),
+
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                
+                image: NetworkImage('https://i.pinimg.com/550x/39/fe/a7/39fea76d74a1b9c48d0c455f7d9ec27b.jpg'),
+                fit: BoxFit.cover
+                )
+            ),
+            padding: EdgeInsets.all(5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  width: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20)),
+                  //color: Colors.white,
+                  width: 300,
+                  height: 50,
                   child: TextField(
                     controller: _insetarUbiController,
                     keyboardType: TextInputType.number,
@@ -154,59 +212,33 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
                         prefixIcon: Icon(Icons.search)),
                   ),
                 ),
-                SizedBox(width: 10),
-                ElevatedButton(
-                    onPressed: () {
-                      obtenerDatosUbicacion();
-                    },
-                    child: Text('Buscar')),
-                SizedBox(width: 290),
-                ElevatedButton(
-                  onPressed: () => mostrarFormularioUbicacion(),
-                  child: Text('Agregar Ubicación', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
+                SizedBox(width: 40,),
+                SizedBox(
+                  height: 60,
+                  width: 120,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        obtenerDatosUbicacion();
+                      },
+                      child: Text('Buscar',)),
                 ),
+                SizedBox(width: 150),
+                SizedBox(
+                  width: 120,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () => mostrarFormularioUbicacion(),
+                    child: Text(
+                      
+                      'Agregar Ubicación', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+
+                SizedBox(height: 100,)
               ],
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: jsonUbic.length,
-              itemBuilder: (context, index) {
-                final ubicacion = jsonUbic[index];
-                return ListTile(
-                  title: Text('Ubicación: ${ubicacion['Ubicacion']}'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('ID: ${ubicacion['id']}'),
-                      Text('Zona: ${ubicacion['Zona']}'),
-                      Text('Stand: ${ubicacion['Stand']}'),
-                      Text('Columna: ${ubicacion['col']}'),
-                      Text('Fila: ${ubicacion['fil']}'),
-                      Text('Cantidad: ${ubicacion['Cantidad']}'),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () {
-                          mostrarFormularioUbicacion(ubicacion: ubicacion);
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          eliminarData(ubicacion['id'].toString());
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
+          
         ],
       ),
     );
@@ -267,77 +299,45 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
     }
   }
 
-  bool validateData(Map<String, dynamic> data) {
-  // Validar que todos los campos necesarios no estén vacíos
-  if (data['ubicacion'].isEmpty ||
-      data['zona'].isEmpty ||
-      data['stand'].isEmpty ||
-      data['col'].isEmpty ||
-      data['fil'].isEmpty ||
-      data['cantidad'].isEmpty) {
-    return false;
-  }
-  return true;
-}
-
-Future<void> actualizarData(Map<String, dynamic> ubicacion) async {
+  Future<void> _actualizarData(Map<String, dynamic> ubicacion) async {
   try {
-    final url = 'http://190.107.181.163:81/amq/flutter_ajax_update.php';
-
-    final Map<String, dynamic> body = {
+    final url = 'http://190.107.181.163:81/amq/flutter_ajax_edit.php';
+    
+    // Imprimir los datos que se van a enviar para actualizar
+    print('Datos para actualizar: $ubicacion');
+    
+    final response = await http.put(Uri.parse(url), body: {
       'id': ubicacion['id'],
-      'ubicacion': _ubicacionController.text,
-      'zona': _zonaController.text,
-      'stand': _standController.text,
-      'col': _colController.text,
-      'fil': _filController.text,
-      'cantidad': _cantidadController.text,
-      'usuario': _usuarioController.text,
-      'Img': _imgController.text,
-    };
-
-    if (!validateData(body)) {
-      print('Error: Datos inválidos');
-      return;
-    }
-
-    print('Actualizando datos con el body: $body');
-
-    final response = await http.put(Uri.parse(url), body: jsonEncode(body), headers: {
-      'Content-Type': 'application/json',
+      'usuario': ubicacion['usuario'],
+      'Ubicacion': ubicacion['Ubicacion'],
+      'Zona': ubicacion['Zona'],
+      'Stand': ubicacion['Stand'],
+      'col': ubicacion['col'],
+      'fil': ubicacion['fil'],
+      'Cantidad': ubicacion['Cantidad'],
+      'Img': ubicacion['Img']
     });
 
-    print('Respuesta del servidor: ${response.body}');
-
     if (response.statusCode == 200) {
-      obtenerDatosUbicacion(); // Refrescar después de actualizar datos
+      // Imprimir la respuesta del servidor
+      print('Respuesta del servidor: ${response.body}');
+      
+      setState(() {
+        final index = jsonUbic.indexWhere((element) => element['id'] == ubicacion['id']);
+        if (index != -1) {
+          jsonUbic[index] = ubicacion;
+          _clearTextControllers();
+        }
+        print('Datos actualizados en el estado: $ubicacion');
+      });
     } else {
-      print('Error al actualizar la ubicación. Status code: ${response.statusCode}');
+      print('Error al actualizar la ubicación. Código de estado: ${response.statusCode}');
     }
   } catch (e) {
     print('Error: $e');
   }
 }
 
-
-
-  Future<void> eliminarData(String id) async {
-    try {
-      final url = 'http://190.107.181.163:81/amq/flutter_ajax_delete.php?id=$id';
-      final response = await http.delete(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        setState(() {
-          jsonUbic.removeWhere((element) => element['id'] == id);
-        });
-        obtenerDatosUbicacion();
-      } else {
-        print('Error al eliminar la ubicación. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
 
   Future<void> obtenerDatosUbicacion() async {
   try {
@@ -355,7 +355,7 @@ Future<void> actualizarData(Map<String, dynamic> ubicacion) async {
         setState(() {
           jsonUbic = [];
         });
-        print('Error al consumir el API. Status code: ${response.statusCode}');
+        print('Error al consumir el API. Código de estado: ${response.statusCode}');
       }
     } else {
       setState(() {
@@ -370,5 +370,4 @@ Future<void> actualizarData(Map<String, dynamic> ubicacion) async {
     print('Error: $e');
   }
 }
-
 }

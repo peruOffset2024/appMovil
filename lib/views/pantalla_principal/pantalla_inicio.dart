@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sistema_almacenes/views/Layout/layout.dart';
 import 'package:sistema_almacenes/views/Ubicaciones/actualizar_ubicaciom.dart';
 import 'package:sistema_almacenes/views/index.dart';
-import 'package:sistema_almacenes/views/login/login.dart';
+
+
 
 
 
@@ -12,6 +13,7 @@ class PantallaInicioAmp extends StatefulWidget {
 }
 
 class _PantallaInicioAmpState extends State<PantallaInicioAmp> {
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,7 +123,8 @@ class _PantallaInicioAmpState extends State<PantallaInicioAmp> {
             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage('https://peruoffset.pe/assets/images/iconos/logo-peruoffset.png'), // URL de la imagen de fondo
+                  image: NetworkImage('https://peruoffset.pe/assets/images/iconos/logo-peruoffset.png'),
+                  
                   
                   alignment: Alignment.center, // Centrar la imagen
                 ),
@@ -134,12 +137,13 @@ class _PantallaInicioAmpState extends State<PantallaInicioAmp> {
                 GridView.count(
                   shrinkWrap: true,
                   primary: true,
-                  crossAxisCount:4,
+                  crossAxisCount:2,
                   children: <Widget>[
+                    
                     _buildGridItem(context, "BD-GENERAL", "Inventario", 'https://cdn-icons-png.flaticon.com/512/2271/2271068.png'),
                     _buildGridItem2(context, "BD-GENERAL", "Layout", 'https://cdn-icons-png.flaticon.com/512/1483/1483285.png'),
-                    _buildGridItem3(context, "ACTUALIZAR UBI", "Mas Ubicaciones", 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTA0nkCT9ewdzBTTS4ZiH2Y-fxPhVdxgobn5w&s'),
-                    _buildGridItemLogin(context, "LOGIN", "Iniciar Sesión", 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7zboBPsPba3Hb0zyRhb0zO77b6_QKcW5gZg&s')
+                    
+                   
                   ],
                 ),
                
@@ -298,54 +302,7 @@ class _PantallaInicioAmpState extends State<PantallaInicioAmp> {
     );
   }
 
-  Widget _buildGridItemLogin(BuildContext context, String title1, String title2, String imageUrl) {
-    return GestureDetector(
-      onTap: () {
-        // Navegar a la nueva vista aquí
-       Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) =>  LoginScreen()),
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0), // Separador entre los elementos
-        child: Card(
-          elevation: 3,
-          margin: EdgeInsets.all(8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50), // Bordes circulares
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.network(
-                imageUrl, // Imagen de ejemplo
-                width: 50,
-                height: 50,
-              ),
-              SizedBox(height: 10),
-              Text(
-                title1,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                title2,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+ 
 
   
 }

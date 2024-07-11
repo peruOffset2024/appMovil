@@ -3,7 +3,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter/services.dart';
+import 'package:sistema_almacenes/views/Layout/layout.dart';
 import 'package:sistema_almacenes/views/Ubicaciones/actualizar_ubicaciom.dart';
+
 
 import 'package:sistema_almacenes/views/sub_widgets/tabla_ubicaciones.dart';
 import 'package:sistema_almacenes/views/sub_widgets/tabla_almacen.dart';
@@ -25,26 +27,129 @@ class _IndexPagState extends State<IndexPag> {
   
 
     return Scaffold(
+      drawer: Drawer(
+  child: ListView(
+    padding: EdgeInsets.zero,
+    children: [
+      UserAccountsDrawerHeader(
+        accountName: Text("John Doe"),
+        accountEmail: Text("johndoe@example.com"),
+        currentAccountPicture: CircleAvatar(
+          backgroundImage: NetworkImage("https://example.com/profile_picture.jpg"),
+        ),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage("https://example.com/background_image.jpg"),
+            fit: BoxFit.fill,
+          ),
+        ),
+      ),
+      ListTile(
+        leading: Icon(Icons.home),
+        title: Text("Home"),
+        onTap: () {
+  
+          Navigator.pop(context);
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.settings),
+        title: Text("Settings"),
+        onTap: () {
+      
+          Navigator.pop(context);
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.help),
+        title: Text("Help"),
+        onTap: () {
+        
+          Navigator.pop(context);
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.info),
+        title: Text("About"),
+        onTap: () {
+       
+          showAboutDialog(
+            context: context,
+            applicationName: "My App",
+            applicationVersion: "1.0.0",
+            applicationLegalese: "Copyright 2023 My Company",
+          );
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.logout),
+        title: Text("Log out"),
+        onTap: () {
+      
+          Navigator.pop(context);
+        },
+      ),
+      Divider(),
+      ListTile(
+        leading: Icon(Icons.language),
+        title: Text("Language"),
+        trailing: DropdownButton(
+          value: "en",
+          onChanged: (value) {
+       
+          },
+          items: [
+            DropdownMenuItem(
+              child: Text("English"),
+              value: "en",
+            ),
+            DropdownMenuItem(
+              child: Text("Spanish"),
+              value: "es",
+            ),
+            DropdownMenuItem(
+              child: Text("French"),
+              value: "fr",
+            ),
+          ],
+        ),
+      ),
+      ListTile(
+        leading: Icon(Icons.add),
+        title: Text("Theme"),
+        trailing: Switch(
+          value: true,
+          onChanged: (value) {
+          
+          },
+        ),
+      ),
+    ],
+  ),
+),
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Color(0xFF6CA8F1),
           title: Text(
-            'ALMACEN MATERIA PRIMA',
+            'Gestion de inventario',
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
         ),
         body: Stack(
           children: [
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                
                 Padding(
                   padding: const EdgeInsets.all(10.0),
+                  
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
                         width: 400,
+                        
                         child: TextFormField(
                           controller: _codigoSbaController,
                           keyboardType: TextInputType.number,
@@ -100,17 +205,50 @@ class _IndexPagState extends State<IndexPag> {
                     ),
                   ),
                 ),
-
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Divider(),
+                  Container(
+                    height: 120,
+                   
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=> LayoutAmp()));
+                          }, 
+                          child: Image(
+                            height: 80,
+                            width: 80,
+                            image: NetworkImage('https://cdn-icons-png.flaticon.com/512/4507/4507786.png'),)),
+                     
+                        
+                          ElevatedButton(
+                          onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=> InsertarUbicacion()));
+                            
+                          }, 
+                          child: Image(
+                            height: 80,
+                            width: 80,
+                            image: NetworkImage('https://cdn-icons-png.flaticon.com/512/6711/6711415.png'),)),
+                      ],
+                    ),
+                  )
+                ],)
                 
 
+              
                 //MyFooter(),
               ],
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        /*floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=> InsertarUbicacion())) ),
+          onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=> InsertarUbicacion())) ),*/
         );
   }
 

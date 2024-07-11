@@ -334,7 +334,7 @@ class TablaUbicacion extends StatelessWidget {
                         )],
                         ),
                       ],
-                      columnSpacing: 20.0,
+                      columnSpacing: 400.0,
                       horizontalMargin: 10.0,
                       headingTextStyle: TextStyle(
                         color: Colors.black,

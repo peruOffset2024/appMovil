@@ -184,8 +184,8 @@ class TablaAlmacen extends StatelessWidget {
                               ],
                             ),
                         ],
-                        columnSpacing: 20.0,
-                        horizontalMargin: 10.0,
+                        columnSpacing: 190.0,
+                        horizontalMargin: 20.0,
                         headingTextStyle: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,

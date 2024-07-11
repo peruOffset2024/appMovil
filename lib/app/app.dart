@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sistema_almacenes/views/login/login.dart';
+import 'package:provider/provider.dart';
+import 'package:sistema_almacenes/views/login/logeo.dart';
+import 'package:sistema_almacenes/views/login/usuario.dart';
 
 
 
@@ -12,11 +14,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.brown),
-      home: Scaffold(
-      
-        body: LoginScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => usuarioProvider())
+      ],
+      child: MaterialApp(
+        theme: ThemeData(primarySwatch: Colors.brown),
+        home: Scaffold(
+        
+          body: LoginVista(),
+        ),
       ),
     );
   }
