@@ -11,6 +11,9 @@ class _LayoutAmpState extends State<LayoutAmp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+     appBar: AppBar(
+      title: Text('Atras'),
+     ),
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,

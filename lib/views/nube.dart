@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter/services.dart';
 import 'package:sistema_almacenes/views/sub_widgets/drawer_index.dart';
-import 'package:sistema_almacenes/views/Layout/layout.dart';
 import 'package:sistema_almacenes/views/Ubicaciones/actualizar_ubicaciom.dart';
 import 'package:sistema_almacenes/views/sub_widgets/tabla_ubicaciones.dart';
 import 'package:sistema_almacenes/views/sub_widgets/tabla_almacen.dart';
@@ -17,16 +16,12 @@ class IndexPag extends StatefulWidget {
 }
 
 class _IndexPagState extends State<IndexPag> {
-  
   TextEditingController _codigoSbaController = TextEditingController();
   List<dynamic> jsonData = [];
   List<dynamic> jsonDataUbi = [];
- 
+
   double _left = 0;
   double _top = 0;
-
-  double _arriba = 0;
-  double _abajo = 0;
 
   @override
   void initState() {
@@ -35,19 +30,12 @@ class _IndexPagState extends State<IndexPag> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final screenWidth = MediaQuery.of(context).size.width;
       final screenHeight = MediaQuery.of(context).size.height;
-      final screenArriba = MediaQuery.of(context).size.width;
-      final screenAbajo = MediaQuery.of(context).size.height;
       setState(() {
-        _left = screenWidth - 110; // Adjust this value to fine-tune the position
-        _top = (screenHeight / 2) - 20; // Center vertically
-        _arriba = screenArriba - 110; // Adjust this value to fine-tune the position
-        _abajo = (screenAbajo / 2) - 430;
+        _left = screenWidth - 56; // Adjust this value to fine-tune the position
+        _top = (screenHeight / 2) - 28; // Center vertically
       });
     });
   }
-  
-
-  
 
   void _navigateToNewScreen() {
     Navigator.push(
@@ -55,38 +43,24 @@ class _IndexPagState extends State<IndexPag> {
       MaterialPageRoute(builder: (context) => InsertarUbicacion()),
     );
   }
-  void _irAlLayout() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LayoutAmp()),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: DrawerIndex(),
-      
-
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Color(0xFF6CA8F1),
+        title: Text(
+          'Gestion de inventario',
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        ),
+      ),
       body: Stack(
         children: [
-           Positioned(
-                left: 10,
-                right: 200,
-                top:30,
-                
-                child: Text('Peru Offset', style: TextStyle(
-              fontSize: 50,
-              color: Colors.red,
-              fontWeight: FontWeight.bold
-              ),
-              
-              ),),
           Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-             
-              SizedBox(height: 80,),
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Row(
@@ -94,17 +68,13 @@ class _IndexPagState extends State<IndexPag> {
                   children: [
                     Container(
                       width: 400,
-                      child: TextField(
+                      child: TextFormField(
                         controller: _codigoSbaController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            //borderSide: BorderSide(color: Colors.grey),
-                            
-                              //borderRadius: BorderRadius.circular(10),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            //focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                            
                             hintText: 'Ingrese Código SBA',
                             prefixIcon: const Icon(Icons.search)),
                       ),
@@ -114,7 +84,7 @@ class _IndexPagState extends State<IndexPag> {
                       onPressed: _obtenerDatos,
                       child: const Icon(Icons.search, size: 50),
                     ),
-                    const SizedBox(width: 170),
+                    const SizedBox(width: 190),
                     Container(
                       height: 70,
                       width: 70,
@@ -130,6 +100,34 @@ class _IndexPagState extends State<IndexPag> {
                   ],
                 ),
               ),
+              if (_left != 0 && _top != 0) Positioned(
+            left: _left,
+            top: _top,
+            child: Draggable(
+              feedback: _buildChatHead(),
+              child: _buildChatHead(),
+              childWhenDragging: Container(),
+              onDragEnd: (details) {
+                setState(() {
+                  double newLeft = details.offset.dx;
+                  double newTop = details.offset.dy;
+          
+                  // Ensure the button stays within the screen bounds
+                  if (newLeft < 0) newLeft = 0;
+                  if (newTop < 0) newTop = 0;
+                  if (newLeft > MediaQuery.of(context).size.width - 56) {
+                    newLeft = MediaQuery.of(context).size.width - 56;
+                  }
+                  if (newTop > MediaQuery.of(context).size.height - 56) {
+                    newTop = MediaQuery.of(context).size.height - 56;
+                  }
+          
+                  _left = newLeft;
+                  _top = newTop;
+                });
+              },
+            ),
+          ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -150,64 +148,10 @@ class _IndexPagState extends State<IndexPag> {
                   ),
                 ),
               ),
+
             ],
           ),
-          if (_left != 0 && _top != 0) Positioned(
-            left: _left,
-            top: _top,
-            child: Draggable(
-              feedback: _buildChatHead(),
-              child: _buildChatHead(),
-              childWhenDragging: Container(),
-              onDragEnd: (details) {
-                setState(() {
-                  double newLeft = details.offset.dx;
-                  double newTop = details.offset.dy;
-
-                  // Ensure the button stays within the screen bounds
-                  if (newLeft < 0) newLeft = 0;
-                  if (newTop < 0) newTop = 0;
-                  if (newLeft > MediaQuery.of(context).size.width - 56) {
-                    newLeft = MediaQuery.of(context).size.width - 56;
-                  }
-                  if (newTop > MediaQuery.of(context).size.height - 56) {
-                    newTop = MediaQuery.of(context).size.height - 56;
-                  }
-
-                  _left = newLeft;
-                  _top = newTop;
-                });
-              },
-            ),
-          ),
-          if (_arriba != 0 && _abajo != 0) Positioned(
-            left: _arriba,
-            top: _abajo,
-            child: Draggable(
-              feedback: _botonLayout(),
-              child: _botonLayout(),
-              childWhenDragging: Container(),
-              onDragEnd: (details) {
-                setState(() {
-                  double arriba = details.offset.dx;
-                  double abajo = details.offset.dy;
-
-                  // Ensure the button stays within the screen bounds
-                  if (arriba < 0) arriba = 0;
-                  if (abajo < 0) abajo = 0;
-                  if (arriba > MediaQuery.of(context).size.width - 56) {
-                    arriba = MediaQuery.of(context).size.width - 56;
-                  }
-                  if (abajo > MediaQuery.of(context).size.height - 56) {
-                    abajo = MediaQuery.of(context).size.height - 56;
-                  }
-
-                  _arriba = arriba;
-                  _abajo = abajo;
-                });
-              },
-            ),
-          ),
+          
         ],
       ),
     );
@@ -219,11 +163,11 @@ class _IndexPagState extends State<IndexPag> {
       child: GestureDetector(
         onTap: _navigateToNewScreen,
         child: Container(
-          width: 70,
-          height: 70,
+          width: 56,
+          height: 56,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: const Color.fromARGB(255, 199, 211, 221),
+            color: Colors.blue,
             boxShadow: [
               BoxShadow(
                 color: Colors.black45,
@@ -231,37 +175,12 @@ class _IndexPagState extends State<IndexPag> {
                 offset: Offset(2, 2),
               ),
             ],
-            
+            image: DecorationImage(
+              image: NetworkImage(
+                  'https://st4.depositphotos.com/18664664/23958/v/450/depositphotos_239582718-stock-illustration-store-icon-trendy-store-logo.jpg'),
+              fit: BoxFit.cover,
+            ),
           ),
-          child: Icon(
-            size: 50, 
-            Icons.edit),
-        ),
-      ),
-    );
-  }
-
-  Widget _botonLayout() {
-    return Material(
-      type: MaterialType.transparency,
-      child: GestureDetector(
-        onTap: _irAlLayout,
-        child: Container(
-          width: 70,
-          height: 70,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: const Color.fromARGB(255, 199, 211, 221),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black45,
-                blurRadius: 4,
-                offset: Offset(2, 2),
-              ),
-            ],
-            
-          ),
-          child: Icon(Icons.layers_outlined),
         ),
       ),
     );
@@ -416,7 +335,6 @@ class _IndexPagState extends State<IndexPag> {
   }
 
   Map<String, int> _calcularDiferencias() {
-
     Map<String, int> diferencias = {};
 
     for (var almacen in jsonData) {
@@ -437,7 +355,4 @@ class _IndexPagState extends State<IndexPag> {
 
     return diferencias;
   }
-
- 
-
 }

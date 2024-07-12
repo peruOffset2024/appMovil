@@ -4,7 +4,7 @@ class TablaUbicacion extends StatelessWidget {
   final List<dynamic> jsonData;
   final List<dynamic> jsonDataUbi;
   final void Function(String zona, String stand, String col, String fila, String cantidad) onInsertarUbicacion;
-  final void Function(String id) onEliminarUbicacion;
+  
   final void Function(String id, String zona, String stand, String col, String fila, String cantidad) onActualizarUbicacion;
 
   const TablaUbicacion({
@@ -13,7 +13,7 @@ class TablaUbicacion extends StatelessWidget {
     required this.jsonDataUbi,
     required List<dynamic> resultados,
     required this.onInsertarUbicacion,
-    required this.onEliminarUbicacion,
+   
     required this.onActualizarUbicacion,
   }) : super(key: key);
 

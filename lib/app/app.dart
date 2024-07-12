@@ -4,11 +4,6 @@ import 'package:sistema_almacenes/views/login/logeo.dart';
 import 'package:sistema_almacenes/views/login/usuario.dart';
 
 
-
-
-
-
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -19,11 +14,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => usuarioProvider())
       ],
       child: MaterialApp(
-        theme: ThemeData(primarySwatch: Colors.brown),
-        home: Scaffold(
-        
-          body: LoginVista(),
-        ),
+
+        debugShowCheckedModeBanner: false,
+        home: LoginVista(),
       ),
     );
   }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sistema_almacenes/views/Layout/gift.dart';
-import 'package:sistema_almacenes/views/index.dart';
 import 'package:sistema_almacenes/views/login/class_decorations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:sistema_almacenes/views/pantalla_principal/pag_index_modif.dart';
 
 
 
@@ -138,9 +138,9 @@ class _LoginVistaState extends State<LoginVista> {
                               borderRadius: BorderRadius.circular(10)),
                           disabledColor: Colors.grey,
                           onPressed: () async {
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=> FadeinImage()));
+                  
                             
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=> IndexPag()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=> NewPagIndex()));
                            /* if (_formKey.currentState!.validate()) {
                               final token = await iniciarSesion(
                                   _numeroController.text, _passwordController.text);

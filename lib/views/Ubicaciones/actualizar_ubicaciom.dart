@@ -11,7 +11,8 @@ class InsertarUbicacion extends StatefulWidget {
 
 class _InsertarUbicacionState extends State<InsertarUbicacion> {
   final TextEditingController _ubicacionController = TextEditingController();
-  final TextEditingController _insetarUbiController = TextEditingController(); // SBA de búsqueda
+  final TextEditingController _insetarUbiController =
+      TextEditingController(); // SBA de búsqueda
   final TextEditingController _zonaController = TextEditingController();
   final TextEditingController _standController = TextEditingController();
   final TextEditingController _colController = TextEditingController();
@@ -47,12 +48,13 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(mapUbicacion == null ? 'Agregar Ubicación' : 'Actualizar Ubicación'),
+          title: Text(mapUbicacion == null
+              ? 'Agregar Ubicación'
+              : 'Actualizar Ubicación'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                
                 TextField(
                   controller: _insetarUbiController,
                   decoration: InputDecoration(labelText: 'Código SBA'),
@@ -96,7 +98,6 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
           actions: [
             ElevatedButton(
               onPressed: () {
-                
                 if (mapUbicacion == null) {
                   enviarData();
                 } else {
@@ -119,7 +120,7 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
             ),
             ElevatedButton(
               onPressed: () {
-                
+                Navigator.of(context).pop();
               },
               child: Text('Cancelar'),
             ),
@@ -135,110 +136,149 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
       appBar: AppBar(
         centerTitle: true,
         title: Text('Gestión de Ubicaciones'),
-        backgroundColor: Color(0xFF6CA8F1),
+        backgroundColor: Color.fromARGB(255, 173, 192, 197),
       ),
-      body: Column(
-    
+      body: Stack(
         children: [
-
-          Expanded(
-            child: ListView.builder(
-              itemCount: jsonUbic.length,
-              itemBuilder: (context, index) {
-                final ubicacion = jsonUbic[index]; // ubicacion de 
-                return ListTile(
-                  title: Text('Ubicación: ${ubicacion['Ubicacion']}'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Divider(),
-                      Text('ID: ${ubicacion['id']}'),
-                      Text('Zona: ${ubicacion['Zona']}'),
-                      Text('Stand: ${ubicacion['Stand']}'),
-                      Text('Columna: ${ubicacion['col']}'),
-                      Text('Fila: ${ubicacion['fil']}'),
-                      Text('Cantidad: ${ubicacion['Cantidad']}'),
-                      Text('Usuario: ${ubicacion['usuario']}'),
-                      Text('${jsonUbic[index]}'),
-                      Divider()
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image(image: AssetImage('assets/ggg.gif')),
-
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () {
-                          mostrarFormularioUbicacion(mapUbicacion: ubicacion);
-                        },
-                      ),
-                     
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          Divider(),
-
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                
-                image: NetworkImage('https://i.pinimg.com/550x/39/fe/a7/39fea76d74a1b9c48d0c455f7d9ec27b.jpg'),
-                fit: BoxFit.cover
-                )
+                image: NetworkImage(
+                    'https://peruoffset.pe/assets/images/iconos/logo-peruoffset.png'),
+               
+                colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.1),
+                  BlendMode.dstATop,
+                ),
+              ),
             ),
-            padding: EdgeInsets.all(5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+            child: Column(
               children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: jsonUbic.length,
+                    itemBuilder: (context, index) {
+                      final ubicacion = jsonUbic[index]; // ubicacion de
+                      return Card(
+                        margin: EdgeInsets.all(10),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Ubicación: ${ubicacion['Ubicacion'] ?? ''}',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              Divider(),
+                              _buildInfoRow('ID', ubicacion['id'] ?? ''),
+                              _buildInfoRow('Zona', ubicacion['Zona'] ?? ''),
+                              _buildInfoRow('Stand', ubicacion['Stand'] ?? ''),
+                              _buildInfoRow('Columna', ubicacion['col'] ?? ''),
+                              _buildInfoRow('Fila', ubicacion['fil'] ?? ''),
+                              _buildInfoRow('Cantidad', ubicacion['Cantidad'] ?? ''),
+                              _buildInfoRow('Usuario', ubicacion['usuario'] ?? ''),
+                             
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      size: 40,
+                                      Icons.edit),
+                                    onPressed: () {
+                                      mostrarFormularioUbicacion(
+                                          mapUbicacion: ubicacion);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20)),
-                  //color: Colors.white,
-                  width: 300,
-                  height: 50,
-                  child: TextField(
-                    controller: _insetarUbiController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
+                  padding: EdgeInsets.all(5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(20)),
-                        hintText: 'Ingresa código SBA',
-                        prefixIcon: Icon(Icons.search)),
+                        width: 300,
+                        height: 50,
+                        child: TextField(
+                          controller: _insetarUbiController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              hintText: 'Ingresa código SBA',
+                              prefixIcon: Icon(Icons.search)),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 40,
+                      ),
+                      SizedBox(
+                        height: 60,
+                        width: 120,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              obtenerDatosUbicacion();
+                            },
+                            child: Text(
+                              'Buscar',
+                            )),
+                      ),
+                      SizedBox(width: 150),
+                      SizedBox(
+                        width: 120,
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: () => mostrarFormularioUbicacion(),
+                          child: Text(
+                            style: TextStyle(color: Colors.white),
+                            'Agregar +'),
+                            style: ElevatedButton.styleFrom(
+                              
+                              backgroundColor: Colors.blue, // Color del botón
+                              // Color del texto
+                              elevation: 10, // Elevación del botón
+                            ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 100,
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(width: 40,),
-                SizedBox(
-                  height: 60,
-                  width: 120,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        obtenerDatosUbicacion();
-                      },
-                      child: Text('Buscar',)),
-                ),
-                SizedBox(width: 150),
-                SizedBox(
-                  width: 120,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () => mostrarFormularioUbicacion(),
-                    child: Text(
-                      
-                      'Agregar Ubicación', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
-                  ),
-                ),
-
-                SizedBox(height: 100,)
               ],
             ),
           ),
-          
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        children: [
+          Text(
+            '$label: ',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Expanded(
+            child: Text(value),
+          ),
         ],
       ),
     );
@@ -248,7 +288,7 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
     try {
       final sbaCodigoUbi = _insetarUbiController.text;
       final url = 'http://190.107.181.163:81/amq/flutter_ajax_add.php';
-      
+
       // Imprimir los valores antes de enviar
       print('Enviando datos:');
       print('ubicacion: ${_ubicacionController.text}');
@@ -259,7 +299,7 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
       print('cantidad: ${_cantidadController.text}');
       print('usuario: ${_usuarioController.text}');
       print('img: ${_imgController.text}');
-      
+
       final response = await http.post(Uri.parse(url), body: {
         'search': sbaCodigoUbi,
         'ubicacion': _ubicacionController.text,
@@ -285,14 +325,15 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
         };
         setState(() {
           jsonUbic.add(newData);
-          
+
           _clearTextControllers();
-          obtenerDatosUbicacion(); 
+          obtenerDatosUbicacion();
         });
         print(jsonUbic);
         print(newData);
       } else {
-        print('Error al enviar datos a la API. Status code: ${response.statusCode}');
+        print(
+            'Error al enviar datos a la API. Status code: ${response.statusCode}');
       }
     } catch (e) {
       print('Error: $e');
@@ -300,74 +341,77 @@ class _InsertarUbicacionState extends State<InsertarUbicacion> {
   }
 
   Future<void> _actualizarData(Map<String, dynamic> ubicacion) async {
-  try {
-    final url = 'http://190.107.181.163:81/amq/flutter_ajax_edit.php';
-    
-    // Imprimir los datos que se van a enviar para actualizar
-    print('Datos para actualizar: $ubicacion');
-    
-    final response = await http.put(Uri.parse(url), body: {
-      'id': ubicacion['id'],
-      'usuario': ubicacion['usuario'],
-      'Ubicacion': ubicacion['Ubicacion'],
-      'Zona': ubicacion['Zona'],
-      'Stand': ubicacion['Stand'],
-      'col': ubicacion['col'],
-      'fil': ubicacion['fil'],
-      'Cantidad': ubicacion['Cantidad'],
-      'Img': ubicacion['Img']
-    });
+    try {
+      final url = 'http://190.107.181.163:81/amq/flutter_ajax_edit.php';
 
-    if (response.statusCode == 200) {
-      // Imprimir la respuesta del servidor
-      print('Respuesta del servidor: ${response.body}');
-      
-      setState(() {
-        final index = jsonUbic.indexWhere((element) => element['id'] == ubicacion['id']);
-        if (index != -1) {
-          jsonUbic[index] = ubicacion;
-          _clearTextControllers();
-        }
-        print('Datos actualizados en el estado: $ubicacion');
+      // Imprimir los datos que se van a enviar para actualizar
+      print('Datos para actualizar: $ubicacion');
+
+      final response = await http.put(Uri.parse(url), body: {
+        'id': ubicacion['id'] ?? '',
+        'usuario': ubicacion['usuario'] ?? '',
+        'Ubicacion': ubicacion['Ubicacion'] ?? '',
+        'Zona': ubicacion['Zona'] ?? '',
+        'Stand': ubicacion['Stand'] ?? '',
+        'col': ubicacion['col'] ?? '',
+        'fil': ubicacion['fil'] ?? '',
+        'Cantidad': ubicacion['Cantidad'] ?? '',
+        'Img': ubicacion['Img'] ?? ''
       });
-    } else {
-      print('Error al actualizar la ubicación. Código de estado: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-}
 
+      if (response.statusCode == 200) {
+        // Imprimir la respuesta del servidor
+        print('Respuesta del servidor: ${response.body}');
+
+        setState(() {
+          final index = jsonUbic
+              .indexWhere((element) => element['id'] == ubicacion['id']);
+          if (index != -1) {
+            jsonUbic[index] = ubicacion;
+            _clearTextControllers();
+          }
+          print('Datos actualizados en el estado: $ubicacion');
+        });
+      } else {
+        print(
+            'Error al actualizar la ubicación. Código de estado: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   Future<void> obtenerDatosUbicacion() async {
-  try {
-    final codigosba = _insetarUbiController.text;
-    if (codigosba.isNotEmpty) {
-      final urlUbi = 'http://190.107.181.163:81/amq/flutter_ajax_ubi.php?search=$codigosba';
-      final response = await http.get(Uri.parse(urlUbi));
-      if (response.statusCode == 200) {
-        print('Response body: ${response.body}');
-        final data = jsonDecode(response.body);
-        setState(() {
-          jsonUbic = data is List<dynamic> ? data : [];
-        });
+    try {
+      final codigosba = _insetarUbiController.text;
+      if (codigosba.isNotEmpty) {
+        final urlUbi =
+            'http://190.107.181.163:81/amq/flutter_ajax_ubi.php?search=$codigosba';
+        final response = await http.get(Uri.parse(urlUbi));
+        if (response.statusCode == 200) {
+          print('Response body: ${response.body}');
+          final data = jsonDecode(response.body);
+          setState(() {
+            jsonUbic = data is List<dynamic> ? data : [];
+          });
+        } else {
+          setState(() {
+            jsonUbic = [];
+          });
+          print(
+              'Error al consumir el API. Código de estado: ${response.statusCode}');
+        }
       } else {
         setState(() {
           jsonUbic = [];
         });
-        print('Error al consumir el API. Código de estado: ${response.statusCode}');
+        print('Código SBA vacío');
       }
-    } else {
+    } catch (e) {
       setState(() {
         jsonUbic = [];
       });
-      print('Código SBA vacío');
+      print('Error: $e');
     }
-  } catch (e) {
-    setState(() {
-      jsonUbic = [];
-    });
-    print('Error: $e');
   }
-}
 }
