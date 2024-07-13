@@ -3,6 +3,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:signature/signature.dart';
+import 'package:sistema_almacenes/Folder_de_Pruebas/signature_provider.dart';
 import 'package:sistema_almacenes/views/sub_widgets/drawer_index.dart';
 import 'package:sistema_almacenes/views/Layout/layout.dart';
 import 'package:sistema_almacenes/views/Ubicaciones/actualizar_ubicaciom.dart';
@@ -39,15 +42,12 @@ class _IndexPagState extends State<IndexPag> {
       final screenAbajo = MediaQuery.of(context).size.height;
       setState(() {
         _left = screenWidth - 110; // Adjust this value to fine-tune the position
-        _top = (screenHeight / 2) - 20; // Center vertically
+        _top = (screenHeight / 2) - 45; // Center vertically
         _arriba = screenArriba - 110; // Adjust this value to fine-tune the position
-        _abajo = (screenAbajo / 2) - 430;
+        _abajo = (screenAbajo / 2) - 348;
       });
     });
   }
-  
-
-  
 
   void _navigateToNewScreen() {
     Navigator.push(
@@ -66,8 +66,6 @@ class _IndexPagState extends State<IndexPag> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: DrawerIndex(),
-      
-
       body: Stack(
         children: [
            Positioned(
@@ -212,7 +210,6 @@ class _IndexPagState extends State<IndexPag> {
       ),
     );
   }
-
   Widget _buildChatHead() {
     return Material(
       type: MaterialType.transparency,
@@ -240,12 +237,13 @@ class _IndexPagState extends State<IndexPag> {
       ),
     );
   }
-
   Widget _botonLayout() {
     return Material(
       type: MaterialType.transparency,
       child: GestureDetector(
-        onTap: _irAlLayout,
+        onTap: (){
+          _mostrarFirmaDialog(context);
+        },
         child: Container(
           width: 70,
           height: 70,
@@ -264,6 +262,56 @@ class _IndexPagState extends State<IndexPag> {
           child: Icon(Icons.layers_outlined),
         ),
       ),
+    );
+  }
+
+
+  void _mostrarFirmaDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final signatureProvider = Provider.of<SignatureProvider>(context);
+
+        return AlertDialog(
+          title: Text('Anotaciones'),
+          iconColor: Colors.amber,
+          content: Container(
+            width: 800,
+            height: 1200,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color.fromARGB(255, 3, 38, 41)),
+                  ),
+                  child: Signature(
+                    controller: signatureProvider.controller,
+                    height: 800,
+                    width: 700,
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton.icon(onPressed: () {
+                    signatureProvider.clearSignature();
+                  }, label: Text('Borrar Pantalla'),
+                  
+                  
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              child: Text('Cerrar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
