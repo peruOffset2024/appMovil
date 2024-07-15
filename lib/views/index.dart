@@ -6,9 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 import 'package:sistema_almacenes/Folder_de_Pruebas/signature_provider.dart';
+import 'package:sistema_almacenes/layout/layout.dart';
+import 'package:sistema_almacenes/views/Ubicaciones/new_vista_ubicaciones.dart';
 import 'package:sistema_almacenes/views/sub_widgets/drawer_index.dart';
-import 'package:sistema_almacenes/views/Layout/layout.dart';
-import 'package:sistema_almacenes/views/Ubicaciones/actualizar_ubicaciom.dart';
+import 'package:sistema_almacenes/views/sub_widgets/tabla2.dart';
 import 'package:sistema_almacenes/views/sub_widgets/tabla_ubicaciones.dart';
 import 'package:sistema_almacenes/views/sub_widgets/tabla_almacen.dart';
 
@@ -31,6 +32,8 @@ class _IndexPagState extends State<IndexPag> {
   double _arriba = 0;
   double _abajo = 0;
 
+
+
   @override
   void initState() {
     super.initState();
@@ -50,10 +53,15 @@ class _IndexPagState extends State<IndexPag> {
   }
 
   void _navigateToNewScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => InsertarUbicacion()),
+    String codigoSba = _codigoSbaController.text;
+    if (codigoSba.isNotEmpty){
+          Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => VerUbicacion(codigoSba: codigoSba,)),
     );
+    }
+
+   
   }
   void _irAlLayout() {
     Navigator.push(
@@ -66,147 +74,158 @@ class _IndexPagState extends State<IndexPag> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: DrawerIndex(),
-      body: Stack(
-        children: [
-           Positioned(
-                left: 10,
-                right: 200,
-                top:30,
-                
-                child: Text('Peru Offset', style: TextStyle(
-              fontSize: 50,
-              color: Colors.red,
-              fontWeight: FontWeight.bold
-              ),
-              
-              ),),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-             
-              SizedBox(height: 80,),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 400,
-                      child: TextField(
-                        controller: _codigoSbaController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            //borderSide: BorderSide(color: Colors.grey),
-                            
-                              //borderRadius: BorderRadius.circular(10),
-                            ),
-                            //focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                            
-                            hintText: 'Ingrese Código SBA',
-                            prefixIcon: const Icon(Icons.search)),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: _obtenerDatos,
-                      child: const Icon(Icons.search, size: 50),
-                    ),
-                    const SizedBox(width: 170),
-                    Container(
-                      height: 70,
-                      width: 70,
-                      child: FloatingActionButton(
-                          elevation: 20,
-                          backgroundColor: Color.fromARGB(255, 59, 252, 232),
-                          child: const Icon(
-                            Icons.qr_code,
-                            size: 50,
-                          ),
-                          onPressed: () => _scanearCodigo()),
-                    ),
-                  ],
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(image: NetworkImage('https://peruoffset.pe/assets/images/iconos/logo-peruoffset.png'))
+        ),
+        child: Stack(
+          children: [
+             Positioned(
+                  left: 10,
+                  right: 200,
+                  top:30,
+                  
+                  child: Text('Perú Offset', style: TextStyle(
+                fontSize: 50,
+                color: Color.fromARGB(255, 253, 16, 28),
+                fontWeight: FontWeight.bold
                 ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
+                
+                ),),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+               
+                SizedBox(height: 80,),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      TablaAlmacen(
-                        jsonData: jsonData,
-                        resultados: jsonData,
-                        jsonDataUbi: jsonDataUbi,
+                      Container(
+                        width: 400,
+                        child: TextField(
+                          controller: _codigoSbaController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              //borderSide: BorderSide(color: Colors.grey),
+                              
+                                //borderRadius: BorderRadius.circular(10),
+                              ),
+                              //focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                              
+                              hintText: 'Ingrese Código SBA',
+                              prefixIcon: const Icon(Icons.search)),
+                        ),
                       ),
-                      TablaUbicacion(
-                        jsonData: jsonData,
-                        jsonDataUbi: jsonDataUbi,
-                        resultados: [],
-                        onInsertarUbicacion: _insertarUbicacion,
-                        onActualizarUbicacion: _actualizarUbicacion,
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: _obtenerDatos,
+                        child: const Icon(Icons.search, size: 50),
+                      ),
+                      const SizedBox(width: 170),
+                      Container(
+                        height: 70,
+                        width: 70,
+                        child: FloatingActionButton(
+                            elevation: 20,
+                            backgroundColor: Color.fromARGB(255, 59, 252, 232),
+                            child: const Icon(
+                              Icons.qr_code,
+                              size: 50,
+                            ),
+                            onPressed: () => _scanearCodigo()),
                       ),
                     ],
                   ),
                 ),
+           
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        TablaAlmacen(
+                          jsonData: jsonData,
+                          resultados: jsonData,
+                          jsonDataUbi: jsonDataUbi,
+                        ),
+                        TablaUbicacion(
+                          jsonData: jsonData,
+                          jsonDataUbi: jsonDataUbi,
+                          resultados: [],
+                          onInsertarUbicacion: _insertarUbicacion,
+                          onActualizarUbicacion: _actualizarUbicacion, onEliminarUbicacion: (String id) {  }, codigoSba: _codigoSbaController, 
+                        ),
+                       
+                        
+
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (_left != 0 && _top != 0) Positioned(
+              left: _left,
+              top: _top,
+              child: Draggable(
+                feedback: _buildChatHead(),
+                child: _buildChatHead(),
+                childWhenDragging: Container(),
+                onDragEnd: (details) {
+                  setState(() {
+                    double newLeft = details.offset.dx;
+                    double newTop = details.offset.dy;
+        
+                    // Ensure the button stays within the screen bounds
+                    if (newLeft < 0) newLeft = 0;
+                    if (newTop < 0) newTop = 0;
+                    if (newLeft > MediaQuery.of(context).size.width - 56) {
+                      newLeft = MediaQuery.of(context).size.width - 56;
+                    }
+                    if (newTop > MediaQuery.of(context).size.height - 56) {
+                      newTop = MediaQuery.of(context).size.height - 56;
+                    }
+        
+                    _left = newLeft;
+                    _top = newTop;
+                  });
+                },
               ),
-            ],
-          ),
-          if (_left != 0 && _top != 0) Positioned(
-            left: _left,
-            top: _top,
-            child: Draggable(
-              feedback: _buildChatHead(),
-              child: _buildChatHead(),
-              childWhenDragging: Container(),
-              onDragEnd: (details) {
-                setState(() {
-                  double newLeft = details.offset.dx;
-                  double newTop = details.offset.dy;
-
-                  // Ensure the button stays within the screen bounds
-                  if (newLeft < 0) newLeft = 0;
-                  if (newTop < 0) newTop = 0;
-                  if (newLeft > MediaQuery.of(context).size.width - 56) {
-                    newLeft = MediaQuery.of(context).size.width - 56;
-                  }
-                  if (newTop > MediaQuery.of(context).size.height - 56) {
-                    newTop = MediaQuery.of(context).size.height - 56;
-                  }
-
-                  _left = newLeft;
-                  _top = newTop;
-                });
-              },
             ),
-          ),
-          if (_arriba != 0 && _abajo != 0) Positioned(
-            left: _arriba,
-            top: _abajo,
-            child: Draggable(
-              feedback: _botonLayout(),
-              child: _botonLayout(),
-              childWhenDragging: Container(),
-              onDragEnd: (details) {
-                setState(() {
-                  double arriba = details.offset.dx;
-                  double abajo = details.offset.dy;
-
-                  // Ensure the button stays within the screen bounds
-                  if (arriba < 0) arriba = 0;
-                  if (abajo < 0) abajo = 0;
-                  if (arriba > MediaQuery.of(context).size.width - 56) {
-                    arriba = MediaQuery.of(context).size.width - 56;
-                  }
-                  if (abajo > MediaQuery.of(context).size.height - 56) {
-                    abajo = MediaQuery.of(context).size.height - 56;
-                  }
-
-                  _arriba = arriba;
-                  _abajo = abajo;
-                });
-              },
+            if (_arriba != 0 && _abajo != 0) Positioned(
+              left: _arriba,
+              top: _abajo,
+              child: Draggable(
+                feedback: _botonLayout(),
+                child: _botonLayout(),
+                childWhenDragging: Container(),
+                onDragEnd: (details) {
+                  setState(() {
+                    double arriba = details.offset.dx;
+                    double abajo = details.offset.dy;
+        
+                    // Ensure the button stays within the screen bounds
+                    if (arriba < 0) arriba = 0;
+                    if (abajo < 0) abajo = 0;
+                    if (arriba > MediaQuery.of(context).size.width - 56) {
+                      arriba = MediaQuery.of(context).size.width - 56;
+                    }
+                    if (abajo > MediaQuery.of(context).size.height - 56) {
+                      abajo = MediaQuery.of(context).size.height - 56;
+                    }
+        
+                    _arriba = arriba;
+                    _abajo = abajo;
+                  });
+                },
+              ),
             ),
-          ),
-        ],
+            
+          ],
+        ),
       ),
     );
   }

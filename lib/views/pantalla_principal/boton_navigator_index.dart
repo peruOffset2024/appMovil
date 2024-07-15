@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sistema_almacenes/Folder_de_Pruebas/preubas1.dart';
+import 'package:sistema_almacenes/layout/layout.dart';
 import 'package:sistema_almacenes/views/index.dart';
 import 'package:sistema_almacenes/views/login/logeo.dart';
 
@@ -12,7 +12,7 @@ class NewPagIndex extends StatefulWidget {
 
 class _NewPagIndexState extends State<NewPagIndex> {
   int myIndice = 0;
-  List<Widget> rutasPag = [IndexPag(), SignatureScreen(), LoginVista()];
+  List<Widget> rutasPag = [IndexPag(), LayoutAmp(), LoginVista()];
 
   @override
   Widget build(BuildContext context) {

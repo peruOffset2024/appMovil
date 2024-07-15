@@ -3,7 +3,7 @@ import 'package:sistema_almacenes/views/login/class_decorations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:sistema_almacenes/views/pantalla_principal/pag_index_modif.dart';
+import 'package:sistema_almacenes/views/pantalla_principal/boton_navigator_index.dart';
 
 
 
