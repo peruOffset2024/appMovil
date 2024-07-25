@@ -9,7 +9,6 @@ import 'package:sistema_almacenes/Folder_de_Pruebas/signature_provider.dart';
 import 'package:sistema_almacenes/layout/layout.dart';
 import 'package:sistema_almacenes/views/Ubicaciones/new_vista_ubicaciones.dart';
 import 'package:sistema_almacenes/views/sub_widgets/drawer_index.dart';
-import 'package:sistema_almacenes/views/sub_widgets/tabla2.dart';
 import 'package:sistema_almacenes/views/sub_widgets/tabla_ubicaciones.dart';
 import 'package:sistema_almacenes/views/sub_widgets/tabla_almacen.dart';
 
@@ -63,6 +62,7 @@ class _IndexPagState extends State<IndexPag> {
 
    
   }
+  
   void _irAlLayout() {
     Navigator.push(
       context,
@@ -383,14 +383,47 @@ class _IndexPagState extends State<IndexPag> {
   Future<void> _scanearCodigo() async {
     try {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          "#ff6666", "Cancelar", false, ScanMode.BARCODE);
-      setState(() {
-        _codigoSbaController.text = barcodeScanRes;
-      });
-    } on PlatformException {
-      print('Failed to get platform version.');
-    } catch (e) {
-      print('Error: $e');
+          '#ff6666', 'Cancelar', true, ScanMode.QR);
+      if (barcodeScanRes != '-1') {
+        final url =
+            'http://190.107.181.163:81/amq/flutter_ajax.php?search=$barcodeScanRes';
+        final response = await http.get(Uri.parse(url));
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          setState(() {
+            jsonData = data is List<dynamic> ? data : [];
+          });
+        } else {
+          setState(() {
+            jsonData = [];
+          });
+          // ignore: avoid_print
+          print('Error al obtener datos desde el escaneo QR');
+        }
+
+        // Realizar petición GET a la ruta del API para obtener los datos de ubicación
+        final urlUbi =
+            'http://190.107.181.163:81/amq/flutter_ajax_ubi.php?search=$barcodeScanRes';
+        final responseUbi = await http.get(Uri.parse(urlUbi));
+        if (responseUbi.statusCode == 200) {
+          final dataUbi = jsonDecode(responseUbi.body);
+          setState(() {
+            jsonDataUbi = dataUbi is List<dynamic> ? dataUbi : [];
+          });
+        } else {
+          setState(() {
+            jsonDataUbi = [];
+          });
+          // ignore: avoid_print
+          print('Error al obtener datos de ubicación desde el escaneo QR');
+        }
+      } else {
+        // ignore: avoid_print
+        print('Escaneo QR cancelado');
+      }
+    } on PlatformException catch (e) {
+      // ignore: avoid_print
+      print('Error al escanear QR: $e');
     }
   }
 
@@ -482,28 +515,6 @@ class _IndexPagState extends State<IndexPag> {
     }
   }
 
-  Map<String, int> _calcularDiferencias() {
-
-    Map<String, int> diferencias = {};
-
-    for (var almacen in jsonData) {
-      if (almacen['Name'] != 'ALMACEN DE FALTANTES') {
-        String almacenName = almacen['Name'];
-        int almacenStock = int.tryParse(almacen['Stock'].toString()) ?? 0;
-        int totalUbicacionStock = jsonDataUbi
-            .where((ubicacion) => ubicacion['Zona'] == almacenName)
-            .fold(
-                0,
-                (sum, ubicacion) =>
-                    sum + (int.tryParse(ubicacion['Cantidad']) ?? 0));
-
-        int diferencia = almacenStock - totalUbicacionStock;
-        diferencias[almacenName] = diferencia;
-      }
-    }
-
-    return diferencias;
-  }
 
  
 
